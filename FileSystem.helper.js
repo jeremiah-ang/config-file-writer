@@ -31,6 +31,7 @@ FileSystemHelper.readFile = function (file, callback) {
 }
 
 
+// Open and create a new file and write into the file
 FileSystemHelper.createAndWrite = function (filename, values, callback) {
 	var fs = require('fs');
 	fs.open (filename, 'w', function (err, fd) {
@@ -75,6 +76,7 @@ FileSystemHelper.parseXML = function (data) {
 	}
 }
 
+// Remove directory recurssively
 FileSystemHelper.removeDir = function (dir) {
 	var fs = require ("fs");
 	var path = require ("path");

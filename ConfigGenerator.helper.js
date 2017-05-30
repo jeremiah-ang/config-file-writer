@@ -1,6 +1,8 @@
 var FileSystemHelper = require ("./FileSystem.helper");
 var ConfigGenerator = {};
 
+// PRE: Error code provided
+// POST: returns Error messages based on error code
 ConfigGenerator.getErrorString = function (err) {
 	switch (err) {
 		case 1: return "SUCCESS";
@@ -10,6 +12,8 @@ ConfigGenerator.getErrorString = function (err) {
 	}
 }
 
+// PRE: 
+// POST: status is generated, code value hard coded. 
 ConfigGenerator.makeStatus = function (msg = '', skipOnEmpty = true, validator = null) {
 	var code = 1, errMsg = '';
 	if (!skipOnEmpty && msg.length == 0) {
@@ -24,13 +28,24 @@ ConfigGenerator.makeStatus = function (msg = '', skipOnEmpty = true, validator =
 	return { code: code, msg: ConfigGenerator.getErrorString(code) + errMsg};
 }
 
+// Creates a stream of queries 
 ConfigGenerator.createNestedQuery = function (interface, queries) {
+
+	// makes interface ask the question, 
+	// receive the reply,
+	// execute callback
 	function question (msg, callback) {
 		interface.question(">> " + msg + "\n", function (input) {
 			interface.write ("\n");
 			callback(input.trim());
 		});
 	}
+
+	// Stream
+	// Controls whether to ask the question again, 
+	// Or ask the next question 
+	// when finish asking all questions,
+	// calls the callback
 	function nestedQuery (i, callback, status = ConfigGenerator.makeStatus(), tries = 0) {
 		if (i >= queries.length) 
 			callback(status);
@@ -50,6 +65,7 @@ ConfigGenerator.createNestedQuery = function (interface, queries) {
 	return nestedQuery;
 }
 
+// Create a query object based on the config.queries object
 ConfigGenerator.makeQuery = function (config, obj) {
 
 	if (obj.default == null && obj.key != null) {
@@ -72,6 +88,8 @@ ConfigGenerator.makeQuery = function (config, obj) {
 	return ConfigGenerator.query (obj.question,obj.handler, obj.default, obj.skipOnEmpty, obj.validator);
 }
 
+// returns an object with attributes of Query object
+// Should make it prototype
 ConfigGenerator.query = function (question, callback, defaultValue = "", skipOnEmpty = true, validator = null) {
 	var obj = {
 		question: ((defaultValue.length > 0) ? question + "(" + defaultValue + ")" : question) + ":",
@@ -89,6 +107,7 @@ ConfigGenerator.query = function (question, callback, defaultValue = "", skipOnE
 }
 
 
+// receives the config object and write into the file specified in the file variable
 ConfigGenerator.createProjectConfig = function (interface, config, status, file) {
 	var ObjectToFileWriter = FileSystemHelper.ObjectToFileWriter;
 	var filewriter = new ObjectToFileWriter(file);
@@ -102,18 +121,22 @@ ConfigGenerator.createProjectConfig = function (interface, config, status, file)
 	interface.close();
 }
 
+// begin the process of reading input
 ConfigGenerator.readInput = function (setup) {
 	var readline = require ('readline');
 
+	// convert each setup queries into query object
 	setup.queries.forEach (function (query, index) {
 		setup.queries[index] = ConfigGenerator.makeQuery(setup.config, query);
 	});
 
+	// setup interface
 	var interface = readline.createInterface({
 		input: process.stdin,
 		output: process.stdout
 	});
 	
+	// ask and process the input values
 	ConfigGenerator.createNestedQuery (interface, setup.queries) (0, function (status) {
 		ConfigGenerator.createProjectConfig(interface, setup.config, status, setup.file);
 	});
@@ -122,7 +145,7 @@ ConfigGenerator.readInput = function (setup) {
 /*
 GIT RELATED FUNCTIONS
 */
-
+// the functions that deals with the user's input
 ConfigGenerator.gitConfigHandler = function (msg) {
 	if (!process.env.DEVELOPMENT && msg.length > 0) {
 		ConfigGenerator.removeGitFolder ();
@@ -135,6 +158,8 @@ ConfigGenerator.removeGitFolder = function () {
 	FileSystemHelper.removeDir ('./.git');
 }
 
+// git init first and 
+// followed by remote add origin
 ConfigGenerator.setGitRemoteURL = function (url) {
 	var exec = require ("child_process").exec;
 	exec ("git init && " +
@@ -147,6 +172,7 @@ ConfigGenerator.setGitRemoteURL = function (url) {
 	});
 }
 
+// TODO
 ConfigGenerator.isValidGitRepo = function (url) {
 	return url.length > 0
 }
@@ -154,6 +180,9 @@ ConfigGenerator.isValidGitRepo = function (url) {
 /*
 MISC. FUNCTIONS
 */
+// PRE: keys is an array where each element is the key to the next level
+// 		i.e. ['a', 1, 'b'] -> obj['a'][1]['b']
+// POST: the value of the given key is retured
 ConfigGenerator.getValueByKeys = function (obj, keys) {
 	var value = obj;
 	keys.forEach(function(key, index){
@@ -165,6 +194,9 @@ ConfigGenerator.getValueByKeys = function (obj, keys) {
 	return value;
 }
 
+// PRE: keys is an array where each element is the key to the next level
+// 		i.e. ['a', 1, 'b'] -> obj['a'][1]['b']
+// POST: the value of the given key is retured set to the new value
 ConfigGenerator.setValueByKeys = function (obj, keys, newValue) {
 	var value = obj;
 	keys.forEach(function(key, index){
