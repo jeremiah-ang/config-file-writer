@@ -1,4 +1,3 @@
 module.exports = {
-    projectTitle: 'sdfsd',
-    jenkins: { rocketchatChannel: 'sfdds', email: 'sfsd' } 
+    projectTitle: 'hey', favs: { fruit: 'haha', color: 'hmm' } 
 }

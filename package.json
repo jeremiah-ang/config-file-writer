@@ -1,0 +1,22 @@
+{
+  "name": "config-file-writer",
+  "version": "1.0.0",
+  "description": "Use CLI to easily generate a config file",
+  "main": "config.cli.js",
+  "scripts": {
+    "test": "node bin/config.cli.js"
+  },
+  "bin": {
+    "config-cli": "bin/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jerm-s/config-file-writer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jerm-s/config-file-writer/issues"
+  },
+  "homepage": "https://github.com/jerm-s/config-file-writer#readme"
+}

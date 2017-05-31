@@ -50,11 +50,24 @@ function ObjectToFileWriter (filename) {
 
 	this.formatter = function (config) {
 		var util = require ('util');
+		var space = "";
+		var pattern = "    ";
 		var resultsString = "module.exports = " 
 			+ util.inspect(config, {depth: null, maxArrayLength: null}) 
-				.replace ("{", "{\n ")
-				.replace (/\n/g, "\n  ")
-				.replace (/}$/, "\n}")
+				.replace (/([^']+)|('[^']+')/g, function ($1, $2) {
+					if ($2)
+						return $2.replace(/\s/g, "");
+					return $1;
+				})
+				.replace (/{|,/g, function ($1) {
+					if ($1 == "{")
+						space = space + pattern;
+					return $1 + "\n" + space;
+				})
+				.replace (/}/g, function ($1) {
+					space = space.substr(0,space.length - pattern.length);
+					return "\n" + space + "}";
+				})
 			+ "\n";
 		return resultsString;
 	}

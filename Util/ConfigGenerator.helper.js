@@ -143,41 +143,6 @@ ConfigGenerator.readInput = function (setup) {
 }
 
 /*
-GIT RELATED FUNCTIONS
-*/
-// the functions that deals with the user's input
-ConfigGenerator.gitConfigHandler = function (msg) {
-	if (!process.env.DEVELOPMENT && msg.length > 0) {
-		ConfigGenerator.removeGitFolder ();
-		if (ConfigGenerator.isValidGitRepo(msg))
-			ConfigGenerator.setGitRemoteURL (msg);
-	}	
-}
-
-ConfigGenerator.removeGitFolder = function () {
-	FileSystemHelper.removeDir ('./.git');
-}
-
-// git init first and 
-// followed by remote add origin
-ConfigGenerator.setGitRemoteURL = function (url) {
-	var exec = require ("child_process").exec;
-	exec ("git init && " +
-		  "git remote add origin " + url, function (error, stdout, stderr) {
-		if (!error) {
-			console.log ("set git remote url to: " + url);
-		} else {
-			console.log (stderr);
-		}
-	});
-}
-
-// TODO
-ConfigGenerator.isValidGitRepo = function (url) {
-	return url.length > 0
-}
-
-/*
 MISC. FUNCTIONS
 */
 // PRE: keys is an array where each element is the key to the next level
