@@ -1,6 +1,6 @@
 {
   "name": "config-file-writer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Use CLI to easily generate a config file",
   "main": "config.cli.js",
   "scripts": {
