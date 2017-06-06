@@ -1,10 +1,10 @@
 {
   "name": "config-file-writer",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Use CLI to easily generate a config file",
   "main": "config.cli.js",
   "scripts": {
-    "test": "node bin/config.cli.js"
+    "test": "node bin/index.js"
   },
   "bin": {
     "config-cli": "bin/index.js"
