@@ -40,9 +40,16 @@ Query.prototype.validate = function (msg) {
 	return Errors.make(msg, this.skipOnEmpty, this.validator);
 }
 
+Query.prototype.hasDefault = function () {
+	return !(this.default == null ||
+		typeof this.default != 'string' ||
+		this.default.length == 0)
+}
+
 Query.prototype.initQuestion = function (config, obj) {
+
 	var question = ">> ";
-	question += (this.default.length > 0) ? obj.question + "(" + this.default + ")" : obj.question;
+	question += (this.hasDefault()) ? obj.question + "(" + this.default + ")" : obj.question;
 	question += (this.multipleAnswer) ? "(Blank to proceed)" : "";
 	question += ":\n";
 	return question;
@@ -60,8 +67,6 @@ Query.prototype.initDefault = function (config, obj) {
 		// get the default value in the config object
 		var getter = Utils.getValueByKeys;
 		return getter(config, obj.key);
-	} else if (obj.default == '') {
-		return null;
 	} else {
 		return obj.default;
 	}
