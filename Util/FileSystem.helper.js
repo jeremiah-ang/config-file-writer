@@ -49,14 +49,8 @@ function ObjectToFileWriter (filename) {
 	}
 
 	this.formatter = function (config) {
-		var util = require ('util');
-		var resultsString = "module.exports = " 
-			+ util.inspect(config, {depth: null, maxArrayLength: null}) 
-				.replace ("{", "{\n ")
-				.replace (/\n/g, "\n  ")
-				.replace (/}$/, "\n}")
-			+ "\n";
-		return resultsString;
+		var PrettyObjectPrinter = require ("./PrettyObjectPrinter");
+		return "module.exports = " + PrettyObjectPrinter.print(config);
 	}
 }
 

@@ -74,13 +74,14 @@ Query.prototype.initDefault = function (config, obj) {
 
 Query.prototype.initHandler = function (config, obj) {
 	var setter = Utils.setValueByKeys;
+	var hasDefault = this.hasDefault();
 
 	if (obj.handler == null) {
 		if (obj.key == null) {
 			return function (msg) {};
 		}
 		return function (msg) { 
-			msg = ((msg == null || msg.length == 0) && this.default != null) ? obj.default : msg;
+			msg = ((msg == null || msg.length == 0) && hasDefault) ? obj.default : msg;
 			setter(config, obj.key, msg); 
 		}
 	} else {
